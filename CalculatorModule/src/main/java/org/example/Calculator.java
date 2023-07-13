@@ -4,13 +4,15 @@ import java.util.Hashtable;
 import java.util.Stack;
 
 public class Calculator {
+
+    Validator validator;
+
+    public Calculator() {
+        validator = new Validator();
+    }
     public int calculate(String expression) {
         Stack<Integer> numberStack = new Stack<>();
         Stack<Character> operatorStack = new Stack<>();
-
-        if (!validate(expression)) {
-            throw new ArithmeticException("Invalid expression.");
-        }
 
         boolean isNegativeNumber = false; //For negative numbers
 
@@ -53,7 +55,7 @@ public class Calculator {
                 if (i < expression.length() - 1 && Character.isDigit(expression.charAt(i + 1)))
                     operatorStack.push('*');
             }
-            else if (isOperation(ch)) {
+            else if (validator.isOperation(ch)) {
                 if (i == 0  || expression.charAt(i - 1) == '(') {
                     //Checking if first char is sign or the prev char is bracket
                     isNegativeNumber = true;
