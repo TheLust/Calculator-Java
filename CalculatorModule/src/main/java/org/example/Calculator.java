@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Stack;
 
 public class Calculator {
-
+    static final String MINUS = "-";
     Validator validator;
 
     public Calculator() {
@@ -79,21 +79,21 @@ public class Calculator {
     }
 
     //Method to handle the priority of operations
-    private boolean hasPrecedence(char op1, char op2) {
-        if (op2 == '(' || op2 == ')')
+    private boolean hasPrecedence(char operator1, char operator2) {
+        if (operator2 == '(' || operator2 == ')')
             return false;
-        return (op1 != '*' && op1 != '/') || (op2 != '+' && op2 != '-');
+        return (operator1 != '*' && operator1 != '/') || (operator2 != '+' && operator2 != '-');
     }
 
-    private int operate(char operator, int x, int y) {
-        if (operator == '/' && y == 0)
+    private int operate(char operator, int number1, int number2) {
+        if (operator == '/' && number2 == 0)
             throw new ArithmeticException("Cannot divide by 0.");
 
         Hashtable<Character, Integer> opHash = new Hashtable<>();
-        opHash.put('+', x + y);
-        opHash.put('-', x - y);
-        opHash.put('*', x * y);
-        opHash.put('/', x / y);
+        opHash.put('+', number1 + number2);
+        opHash.put('-', number1 - number2);
+        opHash.put('*', number1 * number2);
+        opHash.put('/', number1 / number2);
 
         return opHash.get(operator);
     }

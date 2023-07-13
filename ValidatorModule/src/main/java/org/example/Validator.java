@@ -9,61 +9,37 @@ public class Validator {
     }
 
     public String format(String expression) {
-        if (expression.contains("--"))
-            return format(expression.replaceAll("--", "+"));
-
-        if (expression.contains("++"))
-            return format(expression.replaceAll("\\+\\+", "-"));
-
-        if (expression.contains("+-"))
-            return format(expression.replaceAll("\\+-", "-"));
-
-        if (expression.contains("-+"))
-            return format(expression.replaceAll("-\\+", "-"));
-
-        if (expression.contains("**"))
-            return format(expression.replaceAll("\\*\\*", "*"));
-
-        if (expression.contains("//"))
-            return format(expression.replaceAll("//", "/"));
-
-        if (expression.contains("*+"))
-            return format(expression.replaceAll("\\*\\+", "*"));
-
-        if (expression.contains("+*"))
-            return format(expression.replaceAll("\\+\\*", "*"));
-
-        if (expression.contains("/-"))
-            return format(expression.replaceAll("(\\d+)/(\\-(\\d+))", "$1/(-$3)"));
-
-        if (expression.contains("*-"))
-            return format(expression.replaceAll("(\\d+)\\*(-(\\d+))", "$1*(-$3)"));
-
-        if (expression.charAt(0) == '+' || expression.charAt(0) == '*' || expression.charAt(0) == '/')
-            return format(expression.substring(1));
-
-        if (expression.charAt(expression.length() - 1) == '+' ||
-                expression.charAt(expression.length() - 1) == '-' ||
-                expression.charAt(expression.length() - 1) == '*' ||
-                expression.charAt(expression.length() - 1) == '/')
-            return format(expression.substring(0, expression.length() - 1));
-
-        return expression;
+        return expression.replaceAll("\\+-", "-")
+                         .replaceAll("--", "+")
+                         .replaceAll("(\\d+|\\))/-?(\\d+)", "$1/(-$2)")
+                         .replaceAll("(\\d+|\\))\\*-?(\\d+)", "$1*(-$2)");
     }
 
-    public String validate(String expression) throws Exception {
-        if (expression.isEmpty())
+    //
+    public void validate(String expression) throws Exception {
+        if (expression.isBlank() || expression.isEmpty())
             throw new Exception("Empty string.");
 
         if ((isOperation(expression.charAt(0)) && expression.charAt(0) != '-') || isOperation(expression.charAt(expression.length() - 1)))
             throw new Exception("Detected invalid operation.");
 
-        if (expression.chars().filter(c -> c == '(').count() != expression.chars().filter(c -> c == ')').count())
-            throw new Exception("Invalid number of brackets.");
+        long openBr = expression.chars().filter(c -> c == '(').count();
+        long closedBr = expression.chars().filter(c -> c == ')').count();
 
-        if (expression.chars().filter(Character::isLetter).count() != 0)
-            throw new Exception("Letters detected.");
+        if (openBr > closedBr)
+            throw new Exception("Invalid number of brackets. You need to close " + (openBr - closedBr) + " brackets.");
 
-        return expression;
+        if (openBr < closedBr)
+            throw new Exception("Invalid number of brackets. You need to open " + (closedBr - openBr) + " brackets.");
+
+        if (!expression.matches("^[0-9+\\-*/()]+$"))
+            throw new Exception("Character detected.");
+
+        if (expression.matches("\\(.*[+*/].*"))
+            throw new Exception("Invalid expression (.");
+
+        if (expression.matches("[-+*/].*\\)"))
+            throw new Exception("Invalid expression ).");
+
     }
 }
