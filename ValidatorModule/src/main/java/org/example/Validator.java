@@ -21,7 +21,7 @@ public class Validator {
             throw new Exception("Empty string.");
 
         if ((isOperation(expression.charAt(0)) && expression.charAt(0) != '-') || isOperation(expression.charAt(expression.length() - 1)))
-            throw new Exception("Detected invalid operation.");
+            throw new Exception("Invalid format (check index 0 or " + (expression.length() -1) + ").");
 
         long openBr = expression.chars().filter(c -> c == '(').count();
         long closedBr = expression.chars().filter(c -> c == ')').count();
@@ -35,11 +35,17 @@ public class Validator {
         if (!expression.matches("^[0-9+\\-*/()]+$"))
             throw new Exception("Character detected.");
 
-        if (expression.matches("\\(.*[+*/].*"))
-            throw new Exception("Invalid expression (.");
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
 
-        if (expression.matches("[-+*/].*\\)"))
-            throw new Exception("Invalid expression ).");
+            if (c == '(' && !(Character.isDigit(expression.charAt(i + 1)) || expression.charAt(i + 1) == '-')) {
+                throw new Exception("Invalid format (check index " + (i + 2) + ").");
+            }
+
+            if (c == ')' && isOperation(expression.charAt(i - 1))) {
+                throw new Exception("Invalid format (check index " + (i - 2) + ").");
+            }
+        }
 
     }
 }

@@ -11,7 +11,7 @@
     <modules>
         <module>ValidatorModule</module>
         <module>CalculatorModule</module>
-        <module>Calculator</module>
+        <module>Runner</module>
     </modules>
 
     <properties>
